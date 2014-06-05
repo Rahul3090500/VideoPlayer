@@ -122,8 +122,6 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
         var content = this.renderObj.contentURLs[id];
         var classTag = null; //option= additional class tags
 
-        //console.log("APPENDING VIDEO");
-
         var videoElement = document.createElement('video');
         videoElement.setAttribute('id', "video-" + self.videoUuid + "-" + id);
         videoElement.setAttribute('class', "um_video_player vjs-default-skin");
@@ -161,15 +159,12 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
             return;
         }
 
-        //console.log("CONTENT TIME", self.contentTime[videoId], videoId);
-
         self.currentTime(self.renderObj.contentURLs[videoId].startTime);
         self.contentTime[videoId] = self.renderObj.contentURLs[videoId].startTime;
 
     }
 
     this.onVideoReady = function() {
-        //console.log("onVideoReady");
 
         var elementId = this.id;
         var videoId = parseInt(elementId.replace("video-" + self.videoUuid + "-", ""));
@@ -201,36 +196,25 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
         var videoElement = document.getElementById("video-" + self.videoUuid + "-" + self.currentVideo);
         if (self.renderObj.contentURLs[self.currentVideo].endTime <= videoElement.currentTime) {
             console.log("Switch!");
-            // videoElement.parentNode.removeChild(videoElement);
-            // append
-            // currentVideo += 1;
-
-
-
-
+ 
             self.currentVideo++;
 
-            // var videoElement = document.querySelector("#video-"+self.videoUuid+"-"+videoId)
-            // videoElement.style.webkitTransition = "opacity .3s";
-            // videoElement.addEventListener( 'webkitTransitionEnd', function() {
-                console.log ("Boom." + self.currentVideo);
-                if (self.currentVideo - 1 >= 0) {
-                        //console.log("video being paused", self.currentVideo - 1);
-                        if (self.videoObjects[self.currentVideo - 1] != null) {
-                            self.videoObjects[self.currentVideo - 1].pause();
-                        }
-                        self.videoObjects[self.currentVideo - 1] = null;
+            console.log ("Boom." + self.currentVideo);
+            if (self.currentVideo - 1 >= 0) {
+                    //console.log("video being paused", self.currentVideo - 1);
+                    if (self.videoObjects[self.currentVideo - 1] != null) {
+                        self.videoObjects[self.currentVideo - 1].pause();
                     }
-                    console.log ("Hiding" + self.currentVideo);
-                    this.remove();
-                // });
+                    self.videoObjects[self.currentVideo - 1] = null;
+                }
+            console.log ("Hiding" + self.currentVideo);
+            this.remove();
             videoElement.style.opacity = "0"; 
 
 
             if (self.renderObj.contentURLs.length > self.currentVideo) {
                 console.log ("FUCK HERE." + self.currentVideo);
                 var videoElement2 = document.querySelector("#video-" + self.videoUuid + "-" + self.currentVideo);
-                // videoElement.style.webkitTransition = "opacity .3s";
                 videoElement2.style.opacity = "1";
                 self.videoObjects[self.currentVideo].play();
 
@@ -241,68 +225,19 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
 
             }
 
-
-
-
-
         }
-
         if (self.currentVideo == self.renderObj.contentURLs.length && (self.renderObj.contentURLs[self.currentVideo - 1].endTime*1000) - (this.currentTime()*1000) < self.transitionTime) {
             self.onVideoFinish();    
             self.loadInitialVideo();
             self.isVideoPlaying = false;
-            //console.log("");
         }
     }
 
     this.onTimeUpdate = function() {
-
-        var elementId = this.id;
-        var videoId = parseInt(elementId.replace("video-" + self.videoUuid + "-", ""));
-
-        if (self.currentVideo == videoId) {
-
-            //console.log("FUCK HERE!!!", this.currentTime(), (self.contentTime[videoId]))
-
-            if (self.isVideoPlaying) {
-                self.renderObjectTime += self.currentTime() - (self.contentTime[videoId]);
-                self.contentTime[videoId] = self.currentTime();
-                self.onRenderObjectTimeUpdate(self.renderObjectTime);
-            }
-
-            if ((self.renderObj.contentURLs[videoId].endTime*1000) - (self.currentTime()*1000) < self.transitionTime) {
-
-                self.currentVideo++;
-
-                var videoElement = document.querySelector("#video-"+self.videoUuid+"-"+videoId)
-                videoElement.style.webkitTransition = "opacity .3s";
-                videoElement.addEventListener( 'webkitTransitionEnd', function() {
-                    if (self.currentVideo - 1 >= 0) {
-                            //console.log("video being paused", self.currentVideo - 1);
-                            if (self.videoObjects[self.currentVideo - 1] != null) {
-                                self.videoObjects[self.currentVideo - 1].pause();
-                            }
-                            self.videoObjects[self.currentVideo - 1] = null;
-                        }
-
-                        this.remove();
-                    });
-                videoElement.style.opacity = "0"; 
-
-
-                if (self.renderObj.contentURLs.length > self.currentVideo) {
-                    var videoElement2 = document.querySelector("#video-" + self.videoUuid + "-" + self.currentVideo);
-                    videoElement.style.webkitTransition = "opacity .3s";
-                    videoElement.style.opacity = "1";
-                    self.videoObjects[self.currentVideo].play();
-
-                    if (self.renderObj.contentURLs.length > self.currentVideo + 1) {
-                        var content = self.renderObj.contentURLs[self.currentVideo + 1];
-                        self.appendVideo(self.currentVideo + 1, content.url, content.startTime, content.endTime);
-                    }
-
-                }
-            } 
-        }
+        //future: better support for transitions, 
+        //adding support for a scrubber through the whole concat ro
+        //etc.
+        //fullscreen support
+        //better controls
     }
 }
