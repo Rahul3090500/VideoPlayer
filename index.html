@@ -8,43 +8,68 @@
     <title>um-video-player.js test</title>
 
     <!-- Dependancies -->
-    <link rel="stylesheet" href="./css/video-js.css" />
+    <!-- <link rel="stylesheet" href="./css/video-js.css" /> -->
 
     <!-- Actual um-video-player.js -->
     <script src="./js/um-video-player.js"></script>
 
     <!-- Custom Style Sheets -->
-    <link rel="stylesheet" href="css/style.css" />
+    <!-- <link rel="stylesheet" href="css/style.css" /> -->
 
     <!-- Basic Usage of um-video-player.js-->
     <script>
 
-        var renderObjects = {
-            rID: 1,
+        // var renderObject = {
+        //     rID: 1,
+        //     rtitle: 'Ultimate Media Remix',
+        //     rthumbnail: 'moon_thumb.png',
+        //     contentURLs: [{
+        //         url: "http://um-static.media.mit.edu/UU-0MrczERAe4/UU-0MrczERAe4_low.mp4",
+        //         startTime: 2.0,
+        //         endTime: 5.0,
+        //     }, {
+        //         url: "http://um-static.media.mit.edu/UU-2QqLqnxXJc/UU-2QqLqnxXJc_low.mp4",              
+        //         startTime: 2.0,
+        //         endTime: 10.0,
+        //     }, {
+        //         url: "http://um-static.media.mit.edu/UU-0MrczERAe4/UU-0MrczERAe4_low.mp4",
+        //         startTime: 54.0,
+        //         endTime: 59.0,
+        //     }, {
+        //         url: "http://um-static.media.mit.edu/UU-2QqLqnxXJc/UU-2QqLqnxXJc_low.mp4",
+        //         startTime: 10.0,
+        //         endTime: 15.0,
+        //     }, {
+        //         url: "http://um-static.media.mit.edu/UU-0MrczERAe4/UU-0MrczERAe4_low.mp4",
+        //         startTime: 34.0,
+        //         endTime: 37.0,
+        //     }],
+        //     pub_date: [2013,07,30],
+        // };
+
+        var renderObject = {
             rtitle: 'Ultimate Media Remix',
-            rthumbnail: 'moon_thumb.png',
-            contentURLs: [{
+            EDL: [{
                 url: "http://um-static.media.mit.edu/UU-0MrczERAe4/UU-0MrczERAe4_low.mp4",
                 startTime: 2.0,
                 endTime: 5.0,
             }, {
                 url: "http://um-static.media.mit.edu/UU-2QqLqnxXJc/UU-2QqLqnxXJc_low.mp4",              
                 startTime: 2.0,
-                endTime: 10.0,
+                endTime: 4.0,
             }, {
                 url: "http://um-static.media.mit.edu/UU-0MrczERAe4/UU-0MrczERAe4_low.mp4",
                 startTime: 54.0,
-                endTime: 59.0,
+                endTime: 56.0,
             }, {
                 url: "http://um-static.media.mit.edu/UU-2QqLqnxXJc/UU-2QqLqnxXJc_low.mp4",
                 startTime: 10.0,
-                endTime: 15.0,
+                endTime: 13.0,
             }, {
                 url: "http://um-static.media.mit.edu/UU-0MrczERAe4/UU-0MrczERAe4_low.mp4",
                 startTime: 34.0,
                 endTime: 37.0,
             }],
-            pub_date: [2013,07,30],
         };
 
         window.onload = function(){
@@ -53,7 +78,7 @@
 
             function onReady() {
                 console.log("READY");
-                player.play();
+                // player.play();
             }
 
             function onLoadError(e) {
@@ -68,8 +93,15 @@
                 console.log("ON FINISH");
             }
 
-            player = new UMVideoPlayer("vid", "um_video_player_wrapper", onReady, onLoadError, onTimeUpdate, onFinish);
-            player.setRenderObject(renderObjects);
+            player = new UMVideoPlayer("um_video_player_wrapper", renderObject, {
+                "onReady" : onReady, 
+                "onLoadError" : onLoadError, 
+                "onTimeUpdate" : onTimeUpdate, 
+                "onFinish" : onFinish,
+                "transitionTime" : .3,
+                "classString" : "um-video-player video_element"
+            });
+            // player.setRenderObject(renderObjects);
 
         };
     
@@ -79,9 +111,7 @@
 <body>
 
     <!-- Placeholder for video player -->
-    <div id="um_video_player_wrapper">
-        <video id="vid"></video>
-    </div>
+    <div id="um_video_player_wrapper"></div>
 
 </body>
 </html>
