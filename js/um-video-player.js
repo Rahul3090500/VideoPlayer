@@ -1,5 +1,4 @@
 function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectTimeUpdate, onVideoFinish, transition) {
-    console.log ("here");
     var self = this;
 
     this.videoContainer = document.getElementById(wrapperId);
@@ -32,7 +31,6 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
         this.renderObj = obj;
 
         if (this.renderObj == null) {
-            //console.log("RenderObject not set");
             this.onLoadError("Invalid Render Object");
             return;
         }
@@ -74,11 +72,6 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
         } else {
             return this.renderObjectTime;
         }
-
-    }
-
-    this.getMediaUrl = function() {
-        
 
     }
 
@@ -144,6 +137,7 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
         videoElement.style.left = "0px";
         videoElement.style.top = "0px";
         videoElement.style.opacity = "0";
+        videoElement.style.webkitTransitionEnd = ".3s";
 
         videoElement.addEventListener("loadedmetadata", self.onMetadataLoaded);
         videoElement.addEventListener("loadeddata", self.onVideoReady);
@@ -151,15 +145,10 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
         videoElement.addEventListener("pause", self.onPause);
         videoElement.addEventListener("timeupdate", self.onTimeUpdate);
 
-        //select video id, and video id.parent
-        //in parent append new video with source/range
-        //copy style (id)
-        //add all event listeners
-
         this.videoObjects[id] = videoElement;
         this.contentTime[id] = 0;
 
-        self.videoContainer.appendChild(videoElement);
+        self.videoContainer.insertBefore(videoElement, self.videoContainer.firstChild);
     }    
 
     this.onMetadataLoaded = function() {
@@ -203,6 +192,60 @@ function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectT
 
     this.onPause = function() {
         console.log("onPause");
+        console.log ("currentVideo = " + self.currentVideo); 
+        console.log ("self.renderObj.contentURLs.length= " + self.renderObj.contentURLs.length);
+        console.log ("self.renderObj.contentURLs[self.currentVideo].endTime= " + self.renderObj.contentURLs[self.currentVideo].endTime); 
+        console.log ("this.currentTime = " + self.currentTime());
+        console.log ("video currentTime = " + document.getElementById("video-" + self.videoUuid + "-" + self.currentVideo).currentTime);
+
+        var videoElement = document.getElementById("video-" + self.videoUuid + "-" + self.currentVideo);
+        if (self.renderObj.contentURLs[self.currentVideo].endTime <= videoElement.currentTime) {
+            console.log("Switch!");
+            // videoElement.parentNode.removeChild(videoElement);
+            // append
+            // currentVideo += 1;
+
+
+
+
+            self.currentVideo++;
+
+            // var videoElement = document.querySelector("#video-"+self.videoUuid+"-"+videoId)
+            // videoElement.style.webkitTransition = "opacity .3s";
+            // videoElement.addEventListener( 'webkitTransitionEnd', function() {
+                console.log ("Boom." + self.currentVideo);
+                if (self.currentVideo - 1 >= 0) {
+                        //console.log("video being paused", self.currentVideo - 1);
+                        if (self.videoObjects[self.currentVideo - 1] != null) {
+                            self.videoObjects[self.currentVideo - 1].pause();
+                        }
+                        self.videoObjects[self.currentVideo - 1] = null;
+                    }
+                    console.log ("Hiding" + self.currentVideo);
+                    this.remove();
+                // });
+            videoElement.style.opacity = "0"; 
+
+
+            if (self.renderObj.contentURLs.length > self.currentVideo) {
+                console.log ("FUCK HERE." + self.currentVideo);
+                var videoElement2 = document.querySelector("#video-" + self.videoUuid + "-" + self.currentVideo);
+                // videoElement.style.webkitTransition = "opacity .3s";
+                videoElement2.style.opacity = "1";
+                self.videoObjects[self.currentVideo].play();
+
+                if (self.renderObj.contentURLs.length > self.currentVideo + 1) {
+                    var content = self.renderObj.contentURLs[self.currentVideo + 1];
+                    self.appendVideo(self.currentVideo + 1, content.url, content.startTime, content.endTime);
+                }
+
+            }
+
+
+
+
+
+        }
 
         if (self.currentVideo == self.renderObj.contentURLs.length && (self.renderObj.contentURLs[self.currentVideo - 1].endTime*1000) - (this.currentTime()*1000) < self.transitionTime) {
             self.onVideoFinish();    
