@@ -8,8 +8,6 @@
     <title>um-video-player.js test</title>
 
     <!-- Dependancies -->
-    <script src="./js/jquery-2.1.0.min.js"></script>
-    <script src="./js/video.js"></script>
     <link rel="stylesheet" href="./css/video-js.css" />
 
     <!-- Actual um-video-player.js -->
@@ -49,7 +47,7 @@
             pub_date: [2013,07,30],
         };
 
-        $(document).ready(function(){
+        document.onready = function(){
 
             var player;
 
@@ -73,7 +71,7 @@
             player = new UMVideoPlayer("#um_video_player_wrapper", onReady, onLoadError, onTimeUpdate, onFinish);
             player.setRenderObject(renderObjects);
 
-        });
+        };
     
     </script>
 
