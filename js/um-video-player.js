@@ -1,8 +1,11 @@
-function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, onVideoFinish, transition) {
-
+function UMVideoPlayer(videoId, wrapperId, onReady, onLoadError, onRenderObjectTimeUpdate, onVideoFinish, transition) {
+    console.log ("here");
     var self = this;
 
-    this.videoStyle = videoId.style;
+    this.videoContainer = document.getElementById(wrapperId);
+    console.log (self.videoContainer);
+    this.videoId = videoId;
+    this.videoStyle;//document.getElementById(videoId).style;
     this.placeholderHeight = 0;
     this.placeholderWidth = 0;
 
@@ -28,18 +31,21 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
 
         this.renderObj = obj;
 
-        var res = this.getMediaUrl();
-        //console.log(res);
-        if (!res) {
+        if (this.renderObj == null) {
+            //console.log("RenderObject not set");
             this.onLoadError("Invalid Render Object");
+            return;
         }
 
+        this.loadInitialVideo();
+        return true;
     }
 
     this.play = function () {
         if (this.isVideoReady) {
-            var videoElement = document.querySelector("#video-" + self.videoUuid + "-" + self.currentVideo);
-            videoElement.style.webkitTransition = "opacity .3s";
+            var videoElement = document.getElementById("video-" + self.videoUuid + "-" + self.currentVideo);//.getAttribute("id");
+            console.log(videoElement);
+            videoElement.style.webkitTransition = "opacity .3s"; //may want to move
             videoElement.style.opacity = "1";
             this.videoObjects[self.currentVideo].play();
             this.isVideoPlaying = true;
@@ -73,14 +79,6 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
 
     this.getMediaUrl = function() {
         
-        if (this.renderObj == null) {
-            //console.log("RenderObject not set");
-            return false;
-        }
-
-        this.loadInitialVideo();
-
-        return true;
 
     }
 
@@ -98,6 +96,7 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
     this.loadInitialVideo = function () {
 
         //console.log("loadInitialVideo");
+        //this is all fishy 
 
         this.currentVideo = 0;
         this.videoObjects = new Array(this.renderObj.contentURLs.length);
@@ -105,16 +104,18 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
         this.videoUuid = self.generateId(10);
         this.renderObjectTime = 0;
         this.contentTime = new Array(this.renderObj.contentURLs.length);
-        this.placeholderWidth = document.querySelector('#'+this.placeholderDiv).clientWidth();
-        this.placeholderHeight = document.querySelector('#'+this.placeholderDiv).clientHeight();
+        // this.placeholderWidth = document.querySelector('#'+this.placeholderDiv).clientWidth();
+        // this.placeholderHeight = document.querySelector('#'+this.placeholderDiv).clientHeight();
 
         this.loadVideoElement(0);
     }
 
     this.loadVideoElement = function (id) {
+
+        //contentURLs = EDL
         
         var content = this.renderObj.contentURLs[id];
-        this.appendVideo(id, content.url, content.startTime, content.endTime);
+        this.appendVideo(id, content.url, content.startTime, content.endTime); //keep this don't touch
 
         if (this.renderObj.contentURLs.length > id + 1) {
             content = null;
@@ -126,43 +127,44 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
     this.appendVideo = function (id) {
 
         var content = this.renderObj.contentURLs[id];
-        var classTag = null;
+        var classTag = null; //option= additional class tags
 
         //console.log("APPENDING VIDEO");
 
-        var videoObj = videojs("video-" + self.videoUuid + "-" + id, { 
-            "controls": false, 
-            "autoplay": false, 
-            "preload": "auto", 
-        }, function() {
+        var videoElement = document.createElement('video');
+        videoElement.setAttribute('id', "video-" + self.videoUuid + "-" + id);
+        videoElement.setAttribute('class', "um_video_player vjs-default-skin");
+        videoElement.setAttribute('height', 400);
+        videoElement.setAttribute('width', 400);
+        videoElement.setAttribute('src', content.url + "#t=" + content.startTime + "," + content.endTime);
+        videoElement.setAttribute('controls', true);
+        videoElement.setAttribute('preload', "auto");
 
-            //console.log("VID OBJ READY");
+        videoElement.style.position = "absolute";
+        videoElement.style.left = "0px";
+        videoElement.style.top = "0px";
+        videoElement.style.opacity = "0";
 
-            var videoElement = document.querySelector("#video-" + self.videoUuid + "-" + id);
-            videoElement.style.position = "absolute";
-            videoElement.style.left = "0px";
-            videoElement.style.top = "0px";
-            videoElement.style.visibility = "hidden";
+        videoElement.addEventListener("loadedmetadata", self.onMetadataLoaded);
+        videoElement.addEventListener("loadeddata", self.onVideoReady);
+        videoElement.addEventListener("play", self.onPlay);
+        videoElement.addEventListener("pause", self.onPause);
+        videoElement.addEventListener("timeupdate", self.onTimeUpdate);
 
-            this.on("loadedmetadata", self.onMetadataLoaded);
-            this.on("loadeddata", self.onVideoReady);
-            this.on("play", self.onPlay);
-            this.on("pause", self.onPause);
-            this.on("timeupdate", self.onTimeUpdate);
+        //select video id, and video id.parent
+        //in parent append new video with source/range
+        //copy style (id)
+        //add all event listeners
 
-            this.src(content.url);
-        
-        });
-
-        this.videoObjects[id] = videoObj;
+        this.videoObjects[id] = videoElement;
         this.contentTime[id] = 0;
+
+        self.videoContainer.appendChild(videoElement);
     }    
 
     this.onMetadataLoaded = function() {
-        
-        //console.log("onMetadataLoaded");
-        
-        var elementId = this.id_;
+                
+        var elementId = this.id;
         var videoId = parseInt(elementId.replace("video-" + self.videoUuid + "-", ""));
 
         if (videoId == null || videoId < 0) {
@@ -172,7 +174,7 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
 
         //console.log("CONTENT TIME", self.contentTime[videoId], videoId);
 
-        this.currentTime(self.renderObj.contentURLs[videoId].startTime);
+        self.currentTime(self.renderObj.contentURLs[videoId].startTime);
         self.contentTime[videoId] = self.renderObj.contentURLs[videoId].startTime;
 
     }
@@ -180,7 +182,7 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
     this.onVideoReady = function() {
         //console.log("onVideoReady");
 
-        var elementId = this.id_;
+        var elementId = this.id;
         var videoId = parseInt(elementId.replace("video-" + self.videoUuid + "-", ""));
 
         if (videoId == null || videoId < 0) {
@@ -195,12 +197,12 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
     }
 
     this.onPlay = function() {
-        //console.log("onPlay");
+        console.log("onPlay");
 
     }
 
     this.onPause = function() {
-        //console.log("onPause");
+        console.log("onPause");
 
         if (self.currentVideo == self.renderObj.contentURLs.length && (self.renderObj.contentURLs[self.currentVideo - 1].endTime*1000) - (this.currentTime()*1000) < self.transitionTime) {
             self.onVideoFinish();    
@@ -212,7 +214,7 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
 
     this.onTimeUpdate = function() {
 
-        var elementId = this.id_;
+        var elementId = this.id;
         var videoId = parseInt(elementId.replace("video-" + self.videoUuid + "-", ""));
 
         if (self.currentVideo == videoId) {
@@ -220,12 +222,12 @@ function UMVideoPlayer(divId, onReady, onLoadError, onRenderObjectTimeUpdate, on
             //console.log("FUCK HERE!!!", this.currentTime(), (self.contentTime[videoId]))
 
             if (self.isVideoPlaying) {
-                self.renderObjectTime += this.currentTime() - (self.contentTime[videoId]);
-                self.contentTime[videoId] = this.currentTime();
+                self.renderObjectTime += self.currentTime() - (self.contentTime[videoId]);
+                self.contentTime[videoId] = self.currentTime();
                 self.onRenderObjectTimeUpdate(self.renderObjectTime);
             }
 
-            if ((self.renderObj.contentURLs[videoId].endTime*1000) - (this.currentTime()*1000) < self.transitionTime) {
+            if ((self.renderObj.contentURLs[videoId].endTime*1000) - (self.currentTime()*1000) < self.transitionTime) {
 
                 self.currentVideo++;
 

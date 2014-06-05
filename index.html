@@ -47,7 +47,7 @@
             pub_date: [2013,07,30],
         };
 
-        document.onready = function(){
+        window.onload = function(){
 
             var player;
 
@@ -68,7 +68,7 @@
                 console.log("ON FINISH");
             }
 
-            player = new UMVideoPlayer("#um_video_player_wrapper", onReady, onLoadError, onTimeUpdate, onFinish);
+            player = new UMVideoPlayer("vid", "um_video_player_wrapper", onReady, onLoadError, onTimeUpdate, onFinish);
             player.setRenderObject(renderObjects);
 
         };
@@ -79,7 +79,9 @@
 <body>
 
     <!-- Placeholder for video player -->
-    <div id="um_video_player_wrapper"></div>
+    <div id="um_video_player_wrapper">
+        <video id="vid"></video>
+    </div>
 
 </body>
 </html>
