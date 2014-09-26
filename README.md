@@ -89,6 +89,7 @@ var options = { "classString" : "umVideoPlayer",
                 "playHandler" : playHandler,
                 "pauseHandler" : pauseHandler,
                 "timeUpdateHandler" : timeUpdateHandler,
+                "clipTransitionHandler" : clipTransitionHandler
             };
 ```
 
@@ -104,7 +105,7 @@ The options object can contain parameters as well as functions to be used as eve
 
 #### Event Handler Callbacks
 
-- `clipStartedHandler` is called when a new clip begins playing.
+- `clipStartHandler` is called when a new clip begins playing.
 - `durationLoadedHandler` is called after the duration has first been loaded.
 - `finishedHandler` is called when the end of the render object has been reached.
 - `loadingErrorHandler` is called when there is a loading error.
@@ -120,6 +121,10 @@ The options object can contain parameters as well as functions to be used as eve
 #### UMVideoPlayer.currentTime()
 
 - Returns the current time of the video, independent of the current time of the individual clips.
+
+#### UMVideoPlayer.clipIndex()
+
+- Returns the index of the current clip.
 
 #### UMVideoPlayer.duration()
 
