@@ -157,3 +157,9 @@ The options object can contain parameters as well as functions to be used as eve
 
 - This will play the player if it is currently paused, and will pause the player if it is currently playing.
 - This is very useful if you have a single button that acts as both the play button and the pause button.
+
+
+Known Issues
+-----
+
+Chrome has trouble loading the same video sequentially from an EDL. This works better in Safari.
