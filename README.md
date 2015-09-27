@@ -1,4 +1,4 @@
-UMVideoPlayer
+VideoPlayer
 =============
 
 An HTML5 video player that can take in multiple videos with time offsets, and play them in a sequence. Originally developed by Dan Sawada; expanded by Eric Dahlseng and Savannah Niles.
@@ -15,7 +15,7 @@ Usage
 
 ### Demo ###
 
-To see a demo of how the UMVideoPlayer can be used, clone the repository or download this entire folder, and set up a quick HTTP server. Python comes with a simple built-in HTTP server:
+To see a demo of how the VideoPlayer can be used, clone the repository or download this entire folder, and set up a quick HTTP server. Python comes with a simple built-in HTTP server:
 
 ```
 $ python -m SimpleHTTPServer
@@ -23,24 +23,24 @@ $ python -m SimpleHTTPServer
 
 ### Including in your own project ###
 
-If you want to use this module in a project of your own, you simply need to include the UMVideoPlayer.js file. We recommend copying the file into your project folder and including it in the `<head>` section of your html file:
+If you want to use this module in a project of your own, you simply need to include the VideoPlayer.js file. We recommend copying the file into your project folder and including it in the `<head>` section of your html file:
 
 ```html
-<script src="\UMVideoPlayer.js"></script>
+<script src="\VideoPlayer.js"></script>
 ```
 
 If you want to always use the most updated version, feel free to use the GitHub CDN. Keep in mind, however, that the API is subject to change in the future. Just include this in you html `<head>` section:
 
 ```html
-<script src="https://raw.githubusercontent.com/edahlseng/um-videoplayer/master/UMVideoPlayer.js"></script>
+<script src="https://raw.githubusercontent.com/edahlseng/videoplayer/master/VideoPlayer.js"></script>
 ```
 
-### UMVideoPlayer Setup ###
+### VideoPlayer Setup ###
 
-To use the video player, create a UMVideoPlayer object:
+To use the video player, create a VideoPlayer object:
 
 ```javascript
-var player = new UMVideoPlayer(videoContainerID, renderObject, options);
+var player = new VideoPlayer(videoContainerID, renderObject, options);
 ```
 
 Only the `videoContainerID` and the `renderObject` are required. The `options` parameter allows for customization of the player. The available options are described in detail in the **API Reference** section below.
@@ -48,7 +48,7 @@ Only the `videoContainerID` and the `renderObject` are required. The `options` p
 The `videoContainerID` is the id of a `<div>` element in your html file.  This `<div>` must be empty (any elements you put in it will be removed by the player) as its only purpose is to hold the multiple `<video>` elements in the same place. Be sure to define its height and width in css. The `id` can be arbitrary:
 
 ```html
-<div id="umVideoPlayerContainer"></div>
+<div id="VideoPlayerContainer"></div>
 ```
 
 The renderObject is an object that describes the sources and time ranges of your sequence of clips. The only required part of the render object is the `EDL` array. This array contains a list of objects that must contain a `url` to a video, and optionally a `startTime` and `endTime` in seconds.
@@ -74,14 +74,14 @@ var renderObject = {
 API Reference
 -------------
 
-The UMVideoPlayer can be easily customized by specifying options when you create it, and by calling certain predefined methods.
+The VideoPlayer can be easily customized by specifying options when you create it, and by calling certain predefined methods.
 
 ### Options ###
 
 You may pass in an `options` object in order to customize the video player. The syntax of the options object looks like this:
 
 ```javascript
-var options = { "classString" : "umVideoPlayer",
+var options = { "classString" : "VideoPlayer",
                 "transitionTime" : .1,
                 "loadingErrorHandler" : loadingErrorHandler,
                 "loadingStartedHandler" : loadingStartedHandler,
@@ -97,7 +97,7 @@ The options object can contain parameters as well as functions to be used as eve
 
 #### Parameters
 
-- `autoLoadDuration` is a boolean that specifies whether the video player should automatically load the duration when it is first created. See **UMVideoPlayer.loadDuration()** below in the **Methods** section for more information. The default is `false`.
+- `autoLoadDuration` is a boolean that specifies whether the video player should automatically load the duration when it is first created. See **VideoPlayer.loadDuration()** below in the **Methods** section for more information. The default is `false`.
 - `autoReload` is a boolean that specifies whether the video player should reload the render object when it has reached the end. The default is `true`.
 - `classString` is the string that will be added to the `class` attribute of the `<video>` elements that the player automatically creates. This parameter allows you to apply css rules to those `<video>` elements.
 - `preloadAmount` is the number of clips that should be loaded in advance. In order to elminiate the time lag between clips, the video player will preload clips. By default the player preloads 1 clip. If the clips that you use are very short, or your users have slower internet connections, you may specifiy a larger `preloadAmount`. Keep in mind that this may cause a larger loading delay at the beginning, however.
@@ -118,42 +118,42 @@ The options object can contain parameters as well as functions to be used as eve
 
 ### Methods ###
 
-#### UMVideoPlayer.currentTime()
+#### VideoPlayer.currentTime()
 
 - Returns the current time of the video, independent of the current time of the individual clips.
 
-#### UMVideoPlayer.clipIndex()
+#### VideoPlayer.clipIndex()
 
 - Returns the index of the current clip.
 
-#### UMVideoPlayer.duration()
+#### VideoPlayer.duration()
 
-- Returns the duration of all clips added together. This may need to be loaded first (see **UMVideoPlayer.loadDuration()** below).
+- Returns the duration of all clips added together. This may need to be loaded first (see **VideoPlayer.loadDuration()** below).
 
-#### UMVideoPlayer.loadDuration()
+#### VideoPlayer.loadDuration()
 
 - Calling this method will load the duration of the video.
-- If some of the clips in the render object did not have a specified `endTime`, then the only way to determine the length of those clips is to load the metadata for those clips and then get the clip duration. This only needs to be done once, but must be done before calling `UMVideoPlayer.duration()`, unless the render object contains an `endTime` for each clip.
+- If some of the clips in the render object did not have a specified `endTime`, then the only way to determine the length of those clips is to load the metadata for those clips and then get the clip duration. This only needs to be done once, but must be done before calling `VideoPlayer.duration()`, unless the render object contains an `endTime` for each clip.
 - You can specify `"autoloadDuration" : true` in the options object if you want the duration to be automatically loaded when the video player is first created.
 
-#### UMVideoPlayer.play()
+#### VideoPlayer.play()
 
 - This will play the video player.
 
-#### UMVideoPlayer.pause()
+#### VideoPlayer.pause()
 
 - This will pause the video player.
 
-#### UMVideoPlayer.seekToClipIndex(clipIndex)
+#### VideoPlayer.seekToClipIndex(clipIndex)
 
 - This will seek the current time of the video player to the beginning of the specified `clipIndex`.
 
-#### UMVideoPlayer.seekToSeconds(desiredSeconds)
+#### VideoPlayer.seekToSeconds(desiredSeconds)
 
 - This will seek the current time of the video player to the time specified in `desiredSeconds`.
 - The duration must be loaded before this method can be used.
 
-#### UMVideoPlayer.togglePlayPause()
+#### VideoPlayer.togglePlayPause()
 
 - This will play the player if it is currently paused, and will pause the player if it is currently playing.
 - This is very useful if you have a single button that acts as both the play button and the pause button.

@@ -6,9 +6,9 @@
 <html>
 <head>
 
-    <title>UM Video Player</title>
+    <title>VideoPlayer</title>
 
-    <script src="./UMVideoPlayer.js"></script>
+    <script src="./VideoPlayer.js"></script>
 
     <script>
         var renderObject = {
@@ -80,7 +80,7 @@
             function timeUpdateHandler() {
                 var percent = player.currentTime() / player.duration();
                 sliderPosition.style.left = (percent * (progressSlider.clientWidth - sliderPosition.clientWidth)) + 'px';
-                
+
                 if (percent >= 100) {
                     sliderCompleted.style.width = progressSlider.clientWidth;
                 }
@@ -90,8 +90,8 @@
             }
 
 
-            player = new UMVideoPlayer("umVideoPlayerContainer", renderObject, {
-                "classString" : "umVideoPlayer",
+            player = new VideoPlayer("VideoPlayerContainer", renderObject, {
+                "classString" : "VideoPlayer",
                 "transitionTime" : .1,
                 "loadingErrorHandler" : loadingErrorHandler,
                 "loadingStartedHandler" : loadingStartedHandler,
@@ -123,7 +123,7 @@
             var clipIndex = parseInt(this.id.substring(4));
             player.seekToClipIndex(clipIndex);
         }
-    
+
     </script>
     <style>
         /* Video Player */
@@ -133,14 +133,14 @@
         body {
             margin: 0; width: 100%; height: 100%;
         }
-        #umVideoPlayerContainer {
+        #VideoPlayerContainer {
             width: 100%;
             height: -moz-calc(100% - 50px);
             height: -webkit-calc(100% - 50px);
             height: calc(100% - 50px);
             background: black;
         }
-        .umVideoPlayer {
+        .VideoPlayer {
             width: 100%;
             height: -moz-calc(100% - 50px);
             height: -webkit-calc(100% - 50px);
@@ -228,7 +228,7 @@
 <body>
 
     <!-- Placeholder for video player -->
-    <div id="umVideoPlayerContainer"></div>
+    <div id="VideoPlayerContainer"></div>
 
     <div id="loadingContainer">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="loadingSymbol" viewBox="0 0 100 100">
